@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>D09D2179-9390-4704-BEC6-1A5E6D8F8A5E</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Tendigi Test</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>09B68B5B2429BB53FE7F33C583EF6A59AD26B882</key>
+		<string>https://github.com/ericjkunz/Tendigi-Test.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Tendigi Test/Tendigi Test.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>09B68B5B2429BB53FE7F33C583EF6A59AD26B882</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/ericjkunz/Tendigi-Test.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>09B68B5B2429BB53FE7F33C583EF6A59AD26B882</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>09B68B5B2429BB53FE7F33C583EF6A59AD26B882</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Tendigi-Test</string>
+		</dict>
+	</array>
+</dict>
+</plist>
