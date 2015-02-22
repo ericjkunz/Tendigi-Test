@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		043899151A97E76F00A3A618 /* TDTwitterFeedTableViewDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 043899141A97E76F00A3A618 /* TDTwitterFeedTableViewDataSource.m */; };
+		043899181A97E87A00A3A618 /* UIColor+TDColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 043899171A97E87A00A3A618 /* UIColor+TDColor.m */; };
+		046247CC1A9A954500C0D6A8 /* TDTwitterCommunicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 046247CB1A9A954500C0D6A8 /* TDTwitterCommunicator.m */; };
 		04C75E351A94ED0600E314EC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C75E341A94ED0600E314EC /* main.m */; };
 		04C75E381A94ED0600E314EC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C75E371A94ED0600E314EC /* AppDelegate.m */; };
 		04C75E3E1A94ED0600E314EC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04C75E3C1A94ED0600E314EC /* Main.storyboard */; };
@@ -30,6 +33,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		043899131A97E76F00A3A618 /* TDTwitterFeedTableViewDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTwitterFeedTableViewDataSource.h; sourceTree = "<group>"; };
+		043899141A97E76F00A3A618 /* TDTwitterFeedTableViewDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTwitterFeedTableViewDataSource.m; sourceTree = "<group>"; };
+		043899161A97E87A00A3A618 /* UIColor+TDColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+TDColor.h"; sourceTree = "<group>"; };
+		043899171A97E87A00A3A618 /* UIColor+TDColor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+TDColor.m"; sourceTree = "<group>"; };
+		046247CA1A9A954400C0D6A8 /* TDTwitterCommunicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTwitterCommunicator.h; sourceTree = "<group>"; };
+		046247CB1A9A954500C0D6A8 /* TDTwitterCommunicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTwitterCommunicator.m; sourceTree = "<group>"; };
 		04C75E2F1A94ED0600E314EC /* Tendigi Test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Tendigi Test.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		04C75E331A94ED0600E314EC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		04C75E341A94ED0600E314EC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -93,6 +102,12 @@
 				04C75E371A94ED0600E314EC /* AppDelegate.m */,
 				04C75E641A94F18800E314EC /* TDTwitterFeedTableViewController.h */,
 				04C75E651A94F18800E314EC /* TDTwitterFeedTableViewController.m */,
+				043899131A97E76F00A3A618 /* TDTwitterFeedTableViewDataSource.h */,
+				043899141A97E76F00A3A618 /* TDTwitterFeedTableViewDataSource.m */,
+				046247CA1A9A954400C0D6A8 /* TDTwitterCommunicator.h */,
+				046247CB1A9A954500C0D6A8 /* TDTwitterCommunicator.m */,
+				043899161A97E87A00A3A618 /* UIColor+TDColor.h */,
+				043899171A97E87A00A3A618 /* UIColor+TDColor.m */,
 				04C75E3C1A94ED0600E314EC /* Main.storyboard */,
 				04C75E3F1A94ED0600E314EC /* Images.xcassets */,
 				04C75E411A94ED0600E314EC /* LaunchScreen.xib */,
@@ -250,6 +265,9 @@
 			files = (
 				04C75E661A94F18800E314EC /* TDTwitterFeedTableViewController.m in Sources */,
 				04C75E381A94ED0600E314EC /* AppDelegate.m in Sources */,
+				043899151A97E76F00A3A618 /* TDTwitterFeedTableViewDataSource.m in Sources */,
+				043899181A97E87A00A3A618 /* UIColor+TDColor.m in Sources */,
+				046247CC1A9A954500C0D6A8 /* TDTwitterCommunicator.m in Sources */,
 				04C75E351A94ED0600E314EC /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
