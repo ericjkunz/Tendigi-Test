@@ -10,11 +10,12 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <TwitterKit/TwitterKit.h>
 
 @interface TDTwitterFeedTableViewDataSource : NSObject <UITableViewDataSource>
 
-- (instancetype)initWithCompletion:(void(^)(bool success, NSError *error))completionHandler;
-- (void)loadTweetsWithCompletion:(void(^)(bool success, NSError *error))completionHandler;
-- (void)refreshTableWithCompletion:(void(^)(bool success, NSError *error))completionHandler;
+@property (nonatomic, weak) id <TWTRTweetViewDelegate> tweetDelegate;
+
+- (void)refreshTweetsCompletion:(void (^)(BOOL success, NSError *error))completionHandler;
 
 @end

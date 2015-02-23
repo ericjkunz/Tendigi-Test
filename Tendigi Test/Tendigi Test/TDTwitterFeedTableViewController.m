@@ -10,6 +10,7 @@
 #import "TDTwitterFeedTableViewController.h"
 #import <TwitterKit/TwitterKit.h>
 #import "TDTwitterFeedTableViewDataSource.h"
+#import "UIColor+TDColor.h"
 
 @interface TDTwitterFeedTableViewController () <TWTRTweetViewDelegate>
 
@@ -25,15 +26,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    _dataSource = [[TDTwitterFeedTableViewDataSource alloc] initWithCompletion:^(bool success, NSError *error) {
-        self.tableView.dataSource = _dataSource;
-
-        if (success) {
-            [self.tableView reloadData];
-        } else {
-            [self showErrorAlert:error];
-        }
-    }];
+    // Data source
+    _dataSource = [[TDTwitterFeedTableViewDataSource alloc] init];
+    _dataSource.tweetDelegate = self;
+    self.tableView.dataSource = _dataSource;
     
     // Navigation bar buttons
     UIBarButtonItem *mentionButton = [[UIBarButtonItem alloc] initWithTitle:@"@" style:UIBarButtonItemStylePlain target:self action:@selector(mentionButtonHit:)];
@@ -42,16 +38,17 @@
     
     // Pull to refresh
     [self.refreshControl addTarget:self action:@selector(refreshTable:) forControlEvents:UIControlEventValueChanged];
-
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotMoreTweets) name:@"gotMoreTweets" object:nil];
     
+    self.navigationController.navigationBar.backgroundColor = [UIColor tendigiPurple];
     
 }
 
 - (void)refreshTable:(id)sender {
     NSLog(@"Refreshing");
     
-    [_dataSource refreshTableWithCompletion:^(bool success, NSError *error) {
+    [_dataSource refreshTweetsCompletion:^(BOOL success, NSError *error) {
         if (success) {
             [self.tableView reloadData];
             [(UIRefreshControl *)sender endRefreshing];
@@ -64,23 +61,12 @@
 
 - (void)gotMoreTweets {
     [self.tableView reloadData];
-    NSLog(@"-got more tweets, reloading table-");
+    NSLog(@"-got tweets, reloading table-");
 }
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)loadTweetsWithCompletion {
-    [_dataSource loadTweetsWithCompletion:^(bool success, NSError *error) {
-        if (success) {
-            [self.tableView reloadData];
-        } else {
-            [self showErrorAlert:error];
-        }
-    }];
 }
 
 - (void)showErrorAlert:(NSError *)error {
@@ -90,14 +76,14 @@
 
 #pragma mark - Navigation
 /*
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
-#pragma mark - Twitter Delgate
+#pragma mark - TWTRTweetViewDelegate
 
 - (void)tweetView:(TWTRTweetView *)tweetView didTapURL:(NSURL *)url {
     // Open a webview
@@ -109,6 +95,27 @@
     [self.navigationController pushViewController:webViewController animated:YES];
 }
 
+- (void)tweetView:(TWTRTweetView *)tweetView
+   didSelectTweet:(TWTRTweet *)tweet {
+    NSLog(@"log in my app that user selected tweet");
+}
+
+// Objective-C
+- (void)tweetView:(TWTRTweetView *)tweetView willShareTweet:(TWTRTweet *)tweet {
+    // Log to my analytics that a user started to share a tweet
+    NSLog(@"Tapped share for tweet: %@", tweet);
+}
+
+// Objective-C
+- (void)tweetView:(TWTRTweetView *)tweetView didShareTweet:(TWTRTweet *)tweet withType:(NSString *)shareType {
+    // Log to to my analytics that a user shared a tweet
+    NSLog(@"Completed share: %@ for tweet: %@", shareType, tweet);
+}
+
+- (void)tweetView:(TWTRTweetView *)tweetView cancelledShareTweet:(TWTRTweet *)tweet {
+    // Log to to my analytics that a user cancelled a share
+    NSLog(@"Cancelled share for tweet: %@", tweet);
+}
 
 #pragma mark - Button Actions
 

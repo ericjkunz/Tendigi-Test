@@ -11,4 +11,9 @@
 
 @interface TDTwitterCommunicator : NSObject
 
+- (instancetype)initWithCompletion:(void(^)(bool success, NSError *error))completionHandler;
+- (void)getTweetsWithCompletion:(void(^)(NSArray *tweets, NSError *error))completionHandler;
+- (void)getNewTweetsWithCompletion:(void (^)(bool success, NSError *error))completionHandler; // For table refresh
+- (void)getTweetsNearTendigiWithCompletion:(void(^)(NSArray *tweets, NSError *error))completionHandler;
+
 @end
