@@ -20,6 +20,7 @@
 		04C75E5D1A94EF2C00E314EC /* TwitterKitResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 04C75E5A1A94EF2C00E314EC /* TwitterKitResources.bundle */; };
 		04C75E5E1A94EF2C00E314EC /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04C75E5B1A94EF2C00E314EC /* Fabric.framework */; };
 		04C75E661A94F18800E314EC /* TDTwitterFeedTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04C75E651A94F18800E314EC /* TDTwitterFeedTableViewController.m */; };
+		04FE36E21A9BF99C002424CC /* TDGeoTwitterFeedTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 04FE36E11A9BF99C002424CC /* TDGeoTwitterFeedTableViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +56,8 @@
 		04C75E5B1A94EF2C00E314EC /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = SOURCE_ROOT; };
 		04C75E641A94F18800E314EC /* TDTwitterFeedTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTwitterFeedTableViewController.h; sourceTree = "<group>"; };
 		04C75E651A94F18800E314EC /* TDTwitterFeedTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTwitterFeedTableViewController.m; sourceTree = "<group>"; };
+		04FE36E01A9BF99C002424CC /* TDGeoTwitterFeedTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDGeoTwitterFeedTableViewController.h; sourceTree = "<group>"; };
+		04FE36E11A9BF99C002424CC /* TDGeoTwitterFeedTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDGeoTwitterFeedTableViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +105,8 @@
 				04C75E371A94ED0600E314EC /* AppDelegate.m */,
 				04C75E641A94F18800E314EC /* TDTwitterFeedTableViewController.h */,
 				04C75E651A94F18800E314EC /* TDTwitterFeedTableViewController.m */,
+				04FE36E01A9BF99C002424CC /* TDGeoTwitterFeedTableViewController.h */,
+				04FE36E11A9BF99C002424CC /* TDGeoTwitterFeedTableViewController.m */,
 				043899131A97E76F00A3A618 /* TDTwitterFeedTableViewDataSource.h */,
 				043899141A97E76F00A3A618 /* TDTwitterFeedTableViewDataSource.m */,
 				046247CA1A9A954400C0D6A8 /* TDTwitterCommunicator.h */,
@@ -269,6 +274,7 @@
 				043899181A97E87A00A3A618 /* UIColor+TDColor.m in Sources */,
 				046247CC1A9A954500C0D6A8 /* TDTwitterCommunicator.m in Sources */,
 				04C75E351A94ED0600E314EC /* main.m in Sources */,
+				04FE36E21A9BF99C002424CC /* TDGeoTwitterFeedTableViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

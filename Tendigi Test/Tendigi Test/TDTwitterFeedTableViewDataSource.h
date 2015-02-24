@@ -14,8 +14,9 @@
 
 @interface TDTwitterFeedTableViewDataSource : NSObject <UITableViewDataSource>
 
-@property (nonatomic, weak) id <TWTRTweetViewDelegate> tweetDelegate;
+@property (nonatomic, weak) UITableViewController <TWTRTweetViewDelegate> *tweetDelegate;
 
+- (instancetype)initLocationBased:(BOOL)local;
 - (void)refreshTweetsCompletion:(void (^)(BOOL success, NSError *error))completionHandler;
 
 @end

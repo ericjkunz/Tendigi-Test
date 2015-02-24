@@ -30,7 +30,7 @@
     // Check for guest session
     if (![[Twitter sharedInstance] guestSession]) {
         [self loginGuestWithCompletion:^(bool success, NSError *error) {
-
+            
         }];
     }
     
@@ -75,16 +75,60 @@
         NSLog(@"error creating request: %@", error);
     }
     
-    NSMutableArray *tweets = [[NSMutableArray alloc] init];
+    [self sendTwitterRequest:twitRequest completion:^(NSArray *tweets, NSError *error) {
+        if (tweets) {
+            completionHandler(tweets, nil);
+        } else {
+            completionHandler(nil, error);
+        }
+    }];
     
-    // Send request
-    [[[Twitter sharedInstance] APIClient] sendTwitterRequest:twitRequest completion:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+}
+
+- (void)getTweetsNearTendigiWithCompletion:(void(^)(NSArray *tweets, NSError *error))completionHandler {
+    // Tendigi location
+    // latitude: 40.703236
+    // longitude: -73.990691
+    
+    //NSString *url = @"https://api.twitter.com/1.1/search/tweets.json?q=dumbo%2C%20ny&src=typd";
+    NSString *searchURL = @"https://api.twitter.com/1.1/search/tweets.json";
+    
+    NSDictionary *params = @{@"q":@"dumbo", @"count":@"50", @"geocode":@"40.703236,-73.990691,1mi"};
+    
+    NSError *error;
+    NSURLRequest *request = [[[Twitter sharedInstance] APIClient] URLRequestWithMethod:@"GET" URL:searchURL parameters:params error:&error];
+    
+    [[[Twitter sharedInstance] APIClient] sendTwitterRequest:request completion:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+        if (data) {
+            NSError *error;
+            NSArray *jsonTweets = [[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error] objectForKey:@"statuses"];
+            
+            NSMutableArray *tweets = [[NSMutableArray alloc] init];
+            for (NSDictionary *d in jsonTweets) {
+                // Add tweets to my tweets array
+                [tweets addObject:[[TWTRTweet alloc] initWithJSONDictionary:d]];
+            }
+            // Set max_id as oldest tweet's id
+            long oldestID = [[[tweets lastObject] tweetID] longLongValue] - 1;
+            self.max_id = [NSNumber numberWithLong:oldestID];
+            completionHandler(tweets, nil);
+        } else {
+            NSLog(@"request error:%@", connectionError);
+            completionHandler(nil, connectionError);
+        }
+    }];
+}
+
+- (void)sendTwitterRequest:(NSURLRequest *)request completion:(void(^)(NSArray *tweets, NSError *error))completionHandler {
+    [[[Twitter sharedInstance] APIClient] sendTwitterRequest:request completion:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
         if (!connectionError) {
             NSError *error;
             NSArray *jsonTweets = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+            
             if (error) {
                 NSLog(@"-Json reading error: %@-", error);
             }
+            NSMutableArray *tweets = [[NSMutableArray alloc] init];
             for (NSDictionary *d in jsonTweets) {
                 // Add tweets to my tweets array
                 [tweets addObject:[[TWTRTweet alloc] initWithJSONDictionary:d]];
@@ -101,18 +145,9 @@
             completionHandler(nil, connectionError);
         }
     }];
-    
 }
 
-- (void)sendTwitterRequest:(NSURLRequest *)request {
-    
-}
-
-- (void)getTweetsNearTendigiWithCompletion:(void(^)(NSArray *tweets, NSError *error))completionHandler{
-    
-}
-
-- (void)getNewTweetsWithCompletion:(void (^)(bool success, NSError *error))completionHandler {
+- (void)getNewTweetsWithCompletion:(void (^)(NSArray *tweets, NSError *error))completionHandler {
     self.max_id = nil;
     
     [self getTweetsWithCompletion:^(NSArray *tweets, NSError *error) {

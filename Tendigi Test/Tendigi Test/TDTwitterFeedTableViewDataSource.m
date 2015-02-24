@@ -25,18 +25,21 @@
 
 @property (nonatomic) TDTwitterCommunicator *communicator;
 @property (nonatomic) NSString *TweetTableReuseIdentifier;
-@property (nonatomic, strong) NSMutableArray *tweets; // Holds all loaded tweets
+@property (nonatomic, strong) NSMutableArray *downloadedTweets; // Holds all loaded tweets
+@property (nonatomic, strong) NSMutableArray *currentTweets;
 @property (nonatomic) int cellWidth;
+
+@property (nonatomic) BOOL local; // Get Dumbo based tweets or Tendigi's tweets
 
 @end
 
 
 @implementation TDTwitterFeedTableViewDataSource
 
-- (instancetype)init {
+- (instancetype)initLocationBased:(BOOL)local {
     self = [super init];
     
-    // setup communicator, get tweets, profit
+    self.local = local;
     
     // Setup tableview
     self.TweetTableReuseIdentifier = @"tweetCell";
@@ -48,14 +51,14 @@
     [TWTRTweetView appearance].linkTextColor = [UIColor tendigiPurple];
     
     self.communicator = [[TDTwitterCommunicator alloc] init];
-    [self.communicator getTweetsWithCompletion:^(NSArray *tweets, NSError *error) {
-        if (tweets) {
-            self.tweets = [[NSMutableArray alloc] initWithArray:tweets];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"gotMoreTweets" object:self];
+    [self getTweetsWithCompletion:^(BOOL success, NSError *error) {
+        if (success) {
+            NSLog(@"success getting tweets");
         } else {
-            
+            NSLog(@"error getting tweets:%@", error);
         }
     }];
+    
     return self;
 }
 
@@ -67,16 +70,16 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
     NSLog(@"-checking number of rows-");
-    return [self.tweets count];
+    return [self.currentTweets count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     TWTRTweetTableViewCell *cell = (TWTRTweetTableViewCell *)[tableView dequeueReusableCellWithIdentifier:self.TweetTableReuseIdentifier forIndexPath:indexPath];
-
+    
     // If user reaches end of currently loaded tweets, load more
     NSLog(@"%ld", (long)indexPath.item);
-    NSLog(@"%lu", (unsigned long)self.tweets.count);
-    if (indexPath.item == self.tweets.count-10 || !self.tweets) {
+    NSLog(@"%lu", (unsigned long)self.currentTweets.count);
+    if (indexPath.item == self.currentTweets.count-1 || !self.currentTweets) {
         NSLog(@"match");
         [self getTweetsWithCompletion:^(BOOL success, NSError *error) {
             if (success) {
@@ -87,7 +90,7 @@
         }];
     }
     // Configure the cell...
-    TWTRTweet *tweet = self.tweets[indexPath.row];
+    TWTRTweet *tweet = self.currentTweets[indexPath.row];
     [cell configureWithTweet:tweet];
     cell.tweetView.delegate = self.tweetDelegate;
     
@@ -95,39 +98,78 @@
 }
 
 - (void)getTweetsWithCompletion:(void(^)(BOOL success, NSError *error))completionHandler {
-    [self.communicator getTweetsWithCompletion:^(NSArray *tweets, NSError *error) {
-        if (tweets) {
-            if (!self.tweets) {
-                self.tweets = [[NSMutableArray alloc] init];
+    if (!self.currentTweets) {
+        self.currentTweets = [[NSMutableArray alloc] init];
+    }
+    
+    if (self.local) {
+        [self.communicator getTweetsNearTendigiWithCompletion:^(NSArray *tweets, NSError *error) {
+            if (tweets) {
+                if (!self.downloadedTweets) {
+                    self.downloadedTweets = [[NSMutableArray alloc] init];
+                }
+                [self.downloadedTweets addObjectsFromArray:tweets];
+                // Add tweets to table
+                [self insertNewTweets:tweets];
+                completionHandler(YES, nil);
+            } else {
+                completionHandler(NO, error);
             }
-            [self.tweets addObjectsFromArray:tweets];
-            // Table view can reload
+
+        }];
+    } else {
+        [self.communicator getTweetsWithCompletion:^(NSArray *tweets, NSError *error) {
+            if (tweets) {
+                if (!self.downloadedTweets) {
+                    self.downloadedTweets = [[NSMutableArray alloc] init];
+                }
+                // Add tweets to table
+                [self insertNewTweets:tweets];
+                completionHandler(YES, nil);
+            } else {
+                completionHandler(NO, error);
+            }
+        }];
+    }
+    
+}
+
+- (void)insertNewTweets:(NSArray *)tweets {
+    NSMutableArray *indexPaths = [NSMutableArray array];
+    NSInteger currentCount = self.currentTweets.count;
+    for (int i = 0; i < tweets.count; i++) {
+        [indexPaths addObject:[NSIndexPath indexPathForRow:currentCount+i inSection:0]];
+    }
+    
+    // do the insertion
+    [self.currentTweets addObjectsFromArray:tweets];
+    
+    // tell the table view to update (at all of the inserted index paths)
+    [self.tweetDelegate.tableView beginUpdates];
+    [self.tweetDelegate.tableView insertRowsAtIndexPaths:indexPaths withRowAnimation:UITableViewRowAnimationAutomatic];
+    [self.tweetDelegate.tableView endUpdates];
+}
+
+- (void)refreshTweetsCompletion:(void (^)(BOOL success, NSError *error))completionHandler {
+    // Dump tweets array and start over loading from top
+    self.currentTweets = [[NSMutableArray alloc] init];
+    self.downloadedTweets = [[NSMutableArray alloc] init];
+    
+    [self.communicator getNewTweetsWithCompletion:^(NSArray *tweets, NSError *error) {
+        if (tweets) {
+            [self.currentTweets addObjectsFromArray:tweets];
             [[NSNotificationCenter defaultCenter] postNotificationName:@"gotMoreTweets" object:self];
             completionHandler(YES, nil);
         } else {
             completionHandler(NO, error);
         }
     }];
-}
-
-- (void)refreshTweetsCompletion:(void (^)(BOOL success, NSError *error))completionHandler {
-    // Dump tweets array and start over loading from top
-    self.tweets = [[NSMutableArray alloc] init];
-    
-    [self.communicator getNewTweetsWithCompletion:^(bool success, NSError *error) {
-        if (success) {
-            completionHandler(YES, nil);
-        } else {
-            completionHandler(NO, error);
-        }
-    }];
-    
     
 }
 
 // Calculate the height of each row
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    TWTRTweet *tweet = self.tweets[indexPath.row];
+    TWTRTweet *tweet = self.currentTweets[indexPath.row];
     
     return [TWTRTweetTableViewCell heightForTweet:tweet width:self.cellWidth];
 }

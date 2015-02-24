@@ -11,7 +11,7 @@
 @implementation UIColor (TDColor)
 
 + (UIColor *)tendigiPurple {
-    UIColor *ourPurple = [UIColor colorWithRed:167 green:107 blue:219 alpha:1.0];
+    UIColor *ourPurple = [UIColor colorWithRed:(167/255.0) green:(107/255.0) blue:(219/255.0) alpha:(1.0)];
     return ourPurple;
 }
 

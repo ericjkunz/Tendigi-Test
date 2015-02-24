@@ -10,6 +10,7 @@
 #import "TDTwitterFeedTableViewController.h"
 #import <TwitterKit/TwitterKit.h>
 #import "TDTwitterFeedTableViewDataSource.h"
+#import "TDGeoTwitterFeedTableViewController.h"
 #import "UIColor+TDColor.h"
 
 @interface TDTwitterFeedTableViewController () <TWTRTweetViewDelegate>
@@ -17,6 +18,8 @@
 {
     TDTwitterFeedTableViewDataSource *_dataSource;
 }
+
+@property (nonatomic) NSURL *viewingURL;
 
 @end
 
@@ -27,14 +30,19 @@
     [super viewDidLoad];
     
     // Data source
-    _dataSource = [[TDTwitterFeedTableViewDataSource alloc] init];
+    _dataSource = [[TDTwitterFeedTableViewDataSource alloc] initLocationBased:NO];
     _dataSource.tweetDelegate = self;
     self.tableView.dataSource = _dataSource;
+    
+    self.tableView.allowsSelection = NO;
     
     // Navigation bar buttons
     UIBarButtonItem *mentionButton = [[UIBarButtonItem alloc] initWithTitle:@"@" style:UIBarButtonItemStylePlain target:self action:@selector(mentionButtonHit:)];
     mentionButton.tintColor = [UIColor whiteColor];
     self.navigationItem.rightBarButtonItem = mentionButton;
+    
+    UIBarButtonItem *localTweetsButton = [[UIBarButtonItem alloc] initWithTitle:@"Local" style:UIBarButtonItemStylePlain target:self action:@selector(localTweetsButton:)];
+    self.navigationItem.leftBarButtonItem = localTweetsButton;
     
     // Pull to refresh
     [self.refreshControl addTarget:self action:@selector(refreshTable:) forControlEvents:UIControlEventValueChanged];
@@ -56,7 +64,6 @@
             [self showErrorAlert:error];
         }
     }];
-    
 }
 
 - (void)gotMoreTweets {
@@ -85,37 +92,37 @@
 
 #pragma mark - TWTRTweetViewDelegate
 
-- (void)tweetView:(TWTRTweetView *)tweetView didTapURL:(NSURL *)url {
-    // Open a webview
-    UIViewController *webViewController = [[UIViewController alloc] init];
-    UIWebView *webView = [[UIWebView alloc] initWithFrame:webViewController.view.bounds];
-    [webView loadRequest:[NSURLRequest requestWithURL:url]];
-    webViewController.view = webView;
+- (void)tweetView:(TWTRTweetView *)tweetView didSelectTweet:(TWTRTweet *)tweet {
+    NSLog(@"user selected tweet");
     
-    [self.navigationController pushViewController:webViewController animated:YES];
+    // Get link from tweet's text
+    NSError *error;
+    NSDataDetector *dataDetector = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypeLink error:&error];
+
+    NSString *tweetText = tweet.text;
+    NSArray *matches = [dataDetector matchesInString:tweetText options:0 range:NSMakeRange(0, [tweetText length])];
+    
+    NSURL *url = [[matches firstObject] URL];
+    
+    if (url) {
+        // Open a webview
+        UIViewController *webViewController = [[UIViewController alloc] init];
+        webViewController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(shareSite:)];
+        UIWebView *webView = [[UIWebView alloc] initWithFrame:webViewController.view.bounds];
+        self.viewingURL = url;
+        [webView loadRequest:[NSURLRequest requestWithURL:url]];
+        webViewController.view = webView;
+        
+        [self.navigationController pushViewController:webViewController animated:YES];
+    }
+    
 }
 
-- (void)tweetView:(TWTRTweetView *)tweetView
-   didSelectTweet:(TWTRTweet *)tweet {
-    NSLog(@"log in my app that user selected tweet");
+- (void)shareSite:(id)sender {
+    UIActivityViewController *acitivtyVC = [[UIActivityViewController alloc] initWithActivityItems:@[self.viewingURL] applicationActivities:nil];
+    [self presentViewController:acitivtyVC animated:YES completion:nil];
 }
 
-// Objective-C
-- (void)tweetView:(TWTRTweetView *)tweetView willShareTweet:(TWTRTweet *)tweet {
-    // Log to my analytics that a user started to share a tweet
-    NSLog(@"Tapped share for tweet: %@", tweet);
-}
-
-// Objective-C
-- (void)tweetView:(TWTRTweetView *)tweetView didShareTweet:(TWTRTweet *)tweet withType:(NSString *)shareType {
-    // Log to to my analytics that a user shared a tweet
-    NSLog(@"Completed share: %@ for tweet: %@", shareType, tweet);
-}
-
-- (void)tweetView:(TWTRTweetView *)tweetView cancelledShareTweet:(TWTRTweet *)tweet {
-    // Log to to my analytics that a user cancelled a share
-    NSLog(@"Cancelled share for tweet: %@", tweet);
-}
 
 #pragma mark - Button Actions
 
@@ -125,8 +132,15 @@
         SLComposeViewController *tweetSheet = [SLComposeViewController
                                                composeViewControllerForServiceType:SLServiceTypeTwitter];
         [tweetSheet setInitialText:@"@Tendigi You are Awesome!"];
-        [self presentViewController:tweetSheet animated:YES completion:nil];
+        [self.navigationController presentViewController:tweetSheet animated:YES completion:nil];
     }
+}
+
+- (void)localTweetsButton:(id)sender {
+    TDGeoTwitterFeedTableViewController *geoVC = [[TDGeoTwitterFeedTableViewController alloc] init];
+    UINavigationController *navVC = [[UINavigationController alloc] initWithRootViewController:geoVC];
+    
+    [self presentViewController:navVC animated:YES completion:nil];
 }
 
 @end
