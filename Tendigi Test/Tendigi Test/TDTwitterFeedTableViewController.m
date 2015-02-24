@@ -5,7 +5,7 @@
 //  Created by Eric Kunz on 2/18/15.
 //  Copyright (c) 2015 Eric J Kunz. All rights reserved.
 //
-// This class controls the main table view with the Tendigi Twitter feed
+//  This class controls the main table view with the Tendigi Twitter feed
 
 #import "TDTwitterFeedTableViewController.h"
 #import <TwitterKit/TwitterKit.h>
@@ -47,8 +47,6 @@
     // Pull to refresh
     [self.refreshControl addTarget:self action:@selector(refreshTable:) forControlEvents:UIControlEventValueChanged];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(gotMoreTweets) name:@"gotMoreTweets" object:nil];
-    
     self.navigationController.navigationBar.backgroundColor = [UIColor tendigiPurple];
     
     self.tableView.delegate = self;
@@ -57,8 +55,6 @@
 }
 
 - (void)refreshTable:(id)sender {
-    NSLog(@"Refreshing");
-    
     [_dataSource refreshTweetsCompletion:^(BOOL success, NSError *error) {
         if (success) {
             [self.tableView reloadData];
@@ -67,11 +63,6 @@
             [self showErrorAlert:error];
         }
     }];
-}
-
-- (void)gotMoreTweets {
-    //[self.tableView reloadData];
-    NSLog(@"-got tweets, reloading table-");
 }
 
 - (void)didReceiveMemoryWarning {
@@ -84,14 +75,7 @@
     [errorAlert show];
 }
 
-#pragma mark - Navigation
-/*
- // In a storyboard-based application, you will often want to do a little preparation before navigation
- - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
- // Get the new view controller using [segue destinationViewController].
- // Pass the selected object to the new view controller.
- }
- */
+#pragma mark - UITableViewDelegate
 
 -(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return [self.estimatedRowHeightCache getEstimatedCellHeightFromCache:indexPath defaultHeight:41.5];
@@ -100,8 +84,6 @@
 #pragma mark - TWTRTweetViewDelegate
 
 - (void)tweetView:(TWTRTweetView *)tweetView didSelectTweet:(TWTRTweet *)tweet {
-    NSLog(@"user selected tweet");
-    
     // Get link from tweet's text
     NSError *error;
     NSDataDetector *dataDetector = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypeLink error:&error];
@@ -126,8 +108,8 @@
 }
 
 - (void)shareSite:(id)sender {
-    UIActivityViewController *acitivtyVC = [[UIActivityViewController alloc] initWithActivityItems:@[self.viewingURL] applicationActivities:nil];
-    [self presentViewController:acitivtyVC animated:YES completion:nil];
+    UIActivityViewController *activityVC = [[UIActivityViewController alloc] initWithActivityItems:@[self.viewingURL] applicationActivities:nil];
+    [self presentViewController:activityVC animated:YES completion:nil];
 }
 
 

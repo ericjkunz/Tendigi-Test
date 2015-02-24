@@ -90,7 +90,6 @@
     // latitude: 40.703236
     // longitude: -73.990691
     
-    //NSString *url = @"https://api.twitter.com/1.1/search/tweets.json?q=dumbo%2C%20ny&src=typd";
     NSString *searchURL = @"https://api.twitter.com/1.1/search/tweets.json";
     
     NSDictionary *params = @{@"q":@"dumbo", @"count":@"50", @"geocode":@"40.703236,-73.990691,1mi"};

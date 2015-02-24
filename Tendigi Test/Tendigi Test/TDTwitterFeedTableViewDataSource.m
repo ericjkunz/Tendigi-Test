@@ -5,16 +5,7 @@
 //  Created by Eric Kunz on 2/20/15.
 //  Copyright (c) 2015 Eric J Kunz. All rights reserved.
 //
-
-
-// TIMELINE REQUESTS
-// Load first page of tweets with only a count
-// The lowest ID recieved set as max_ID
-// the next request should only return tweets with IDs less than max_ID
-// Actually subtract 1 from max_ID to avoid redundant tweets
-
-// Use since_ID to store the highest tweet ID requested
-
+//  Data source for UITableView stores tweets and makes appropriate requests through TDTwitterCommunicator
 
 #import "TDTwitterFeedTableViewDataSource.h"
 #import <TwitterKit/TwitterKit.h>
@@ -25,7 +16,6 @@
 
 @property (nonatomic) TDTwitterCommunicator *communicator;
 @property (nonatomic) NSString *TweetTableReuseIdentifier;
-@property (nonatomic, strong) NSMutableArray *downloadedTweets; // Holds all loaded tweets
 @property (nonatomic) int cellWidth;
 
 @property (nonatomic) BOOL local; // Get Dumbo based tweets or Tendigi's tweets
@@ -68,7 +58,6 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    NSLog(@"-checking number of rows-");
     return [self.currentTweets count];
 }
 
@@ -76,15 +65,12 @@
     TWTRTweetTableViewCell *cell = (TWTRTweetTableViewCell *)[tableView dequeueReusableCellWithIdentifier:self.TweetTableReuseIdentifier forIndexPath:indexPath];
     
     // If user reaches end of currently loaded tweets, load more
-    NSLog(@"%ld", (long)indexPath.item);
-    NSLog(@"%lu", (unsigned long)self.currentTweets.count);
     if (indexPath.item == self.currentTweets.count-1 || !self.currentTweets) {
-        NSLog(@"match");
         [self getTweetsWithCompletion:^(BOOL success, NSError *error) {
             if (success) {
                 NSLog(@"successful loading tweets");
             } else {
-                NSLog(@"failure loading tweets");
+                NSLog(@"failure loading tweets:%@", error);
             }
         }];
     }
@@ -110,10 +96,6 @@
     if (self.local) {
         [self.communicator getTweetsNearTendigiWithCompletion:^(NSArray *tweets, NSError *error) {
             if (tweets) {
-                if (!self.downloadedTweets) {
-                    self.downloadedTweets = [[NSMutableArray alloc] init];
-                }
-                [self.downloadedTweets addObjectsFromArray:tweets];
                 // Add tweets to table
                 [self insertNewTweets:tweets];
                 completionHandler(YES, nil);
@@ -125,9 +107,6 @@
     } else {
         [self.communicator getTweetsWithCompletion:^(NSArray *tweets, NSError *error) {
             if (tweets) {
-                if (!self.downloadedTweets) {
-                    self.downloadedTweets = [[NSMutableArray alloc] init];
-                }
                 // Add tweets to table
                 [self insertNewTweets:tweets];
                 completionHandler(YES, nil);
@@ -157,19 +136,16 @@
 - (void)refreshTweetsCompletion:(void (^)(BOOL success, NSError *error))completionHandler {
     // Dump tweets array and start over loading from top
     self.currentTweets = [[NSMutableArray alloc] init];
-    self.downloadedTweets = [[NSMutableArray alloc] init];
     self.estimatedRowHeightCache = [[TDTableViewHeightCache alloc] init];
     
     [self.communicator getNewTweetsWithCompletion:^(NSArray *tweets, NSError *error) {
         if (tweets) {
             [self.currentTweets addObjectsFromArray:tweets];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"gotMoreTweets" object:self];
             completionHandler(YES, nil);
         } else {
             completionHandler(NO, error);
         }
     }];
-    
 }
 
 @end

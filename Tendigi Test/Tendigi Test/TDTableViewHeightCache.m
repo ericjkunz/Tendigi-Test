@@ -5,6 +5,8 @@
 //  Created by Eric Kunz on 2/24/15.
 //  Copyright (c) 2015 Eric J Kunz. All rights reserved.
 //
+// This class maintains correct UITableViewCell heights on push to view and smooths scrolling on UITableView reload
+//
 // This solution from: http://stackoverflow.com/questions/25221031/uitableview-layout-messing-up-on-push-segue-and-return-ios-8-xcode-beta-5-sw
 
 #import "TDTableViewHeightCache.h"

@@ -5,6 +5,7 @@
 //  Created by Eric Kunz on 2/23/15.
 //  Copyright (c) 2015 Eric J Kunz. All rights reserved.
 //
+//  For viewing Dumbo tweets nearby Tendigi
 
 #import "TDGeoTwitterFeedTableViewController.h"
 #import "TDTwitterFeedTableViewDataSource.h"
@@ -44,9 +45,7 @@
 
 #pragma mark - TWTRTweetViewDelegate
 
-- (void)tweetView:(TWTRTweetView *)tweetView didSelectTweet:(TWTRTweet *)tweet {
-    NSLog(@"user selected tweet");
-    
+- (void)tweetView:(TWTRTweetView *)tweetView didSelectTweet:(TWTRTweet *)tweet {    
     // Get link from tweet's text
     NSError *error;
     NSDataDetector *dataDetector = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypeLink error:&error];
@@ -74,6 +73,8 @@
     UIActivityViewController *acitivtyVC = [[UIActivityViewController alloc] initWithActivityItems:@[self.viewingURL] applicationActivities:nil];
     [self presentViewController:acitivtyVC animated:YES completion:nil];
 }
+
+#pragma mark - UITableViewDelegate
 
 -(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return [self.estimatedRowHeightCache getEstimatedCellHeightFromCache:indexPath defaultHeight:41.5];
