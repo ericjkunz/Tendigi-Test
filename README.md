@@ -2,7 +2,7 @@
 
 Thank you again for this opportunity. Let's get into my app!
 
-![alt tag](https://raw.github.com/username/projectname/branch/path/to/img.png)
+![alt tag](https://raw.githubusercontent.com/ericjkunz/Tendigi-Test/master/TDTestScreenshot.PNG?token=AG5RqqALQiNiGZ_suJwjtfQnYIsgpHzbks5U9fx7wA%3D%3D)
 
 
 I decided to use a UITableView since it fits viewing a Twitter feed well. The main UITableView implements its refreshControl in order to request for the latest tweets and reload the view. 
