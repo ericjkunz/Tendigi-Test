@@ -2,6 +2,7 @@
 
 Thank you again for this opportunity. Let's get into my app!
 
+![alt tag](https://raw.github.com/username/projectname/branch/path/to/img.png)
 
 
 I decided to use a UITableView since it fits viewing a Twitter feed well. The main UITableView implements its refreshControl in order to request for the latest tweets and reload the view. 
@@ -11,3 +12,8 @@ Since Tendigi's tweets are usually about cool articles and news stories I made i
 The Local button will bring you to another UITableView but this time it displays tweets relevant to Dumbo and within 1 mile of Tendigi's office.
 
 Making requests to Twitter's API is done in the TDTwitterCommunicator class. Making requests, sending requests, and even displaying tweets was done through the TwitterKit framework. Requests are made without having the user sign in since viewing Tendigi's timeline and searching for tweets can be done while logged in as a guest.
+
+Congratulations on the app launch! I look forward to hearing your feedback soon.
+
+Best,
+Eric
