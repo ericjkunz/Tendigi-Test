@@ -12,6 +12,8 @@ The Local button will bring you to another UITableView but this time it displays
 
 Making requests to Twitter's API is done in the TDTwitterCommunicator class. Making requests, sending requests, and even displaying tweets was done through the TwitterKit framework. Requests are made without having the user sign in since viewing Tendigi's timeline and searching for tweets can be done while logged in as a guest.
 
+I will be spending some more time on the app to perhaps add some more features and animations as I would like to explore using the Twitter API further and see how far I can take this little project.
+
 Congratulations on the app launch! I look forward to hearing your feedback soon.
 
 Best,
