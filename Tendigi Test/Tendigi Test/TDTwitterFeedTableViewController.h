@@ -8,7 +8,10 @@
 //  This class can show any tweets
 
 #import <UIKit/UIKit.h>
+#import "TDTableViewHeightCache.h"
 
 @interface TDTwitterFeedTableViewController : UITableViewController
+
+@property (nonatomic) TDTableViewHeightCache *estimatedRowHeightCache;
 
 @end

@@ -26,7 +26,6 @@
 @property (nonatomic) TDTwitterCommunicator *communicator;
 @property (nonatomic) NSString *TweetTableReuseIdentifier;
 @property (nonatomic, strong) NSMutableArray *downloadedTweets; // Holds all loaded tweets
-@property (nonatomic, strong) NSMutableArray *currentTweets;
 @property (nonatomic) int cellWidth;
 
 @property (nonatomic) BOOL local; // Get Dumbo based tweets or Tendigi's tweets
@@ -94,6 +93,12 @@
     [cell configureWithTweet:tweet];
     cell.tweetView.delegate = self.tweetDelegate;
     
+    // put estimated cell height in cache if needed
+    if (![self.estimatedRowHeightCache isEstimatedRowHeightInCache:indexPath]) {
+        CGSize cellSize = [cell systemLayoutSizeFittingSize:CGSizeMake(self.cellWidth, 0) withHorizontalFittingPriority:1000.0 verticalFittingPriority:50.0];
+        [self.estimatedRowHeightCache putEstimatedCellHeightToCache:indexPath height:cellSize.height];
+    }
+    
     return cell;
 }
 
@@ -131,7 +136,6 @@
             }
         }];
     }
-    
 }
 
 - (void)insertNewTweets:(NSArray *)tweets {
@@ -154,6 +158,7 @@
     // Dump tweets array and start over loading from top
     self.currentTweets = [[NSMutableArray alloc] init];
     self.downloadedTweets = [[NSMutableArray alloc] init];
+    self.estimatedRowHeightCache = [[TDTableViewHeightCache alloc] init];
     
     [self.communicator getNewTweetsWithCompletion:^(NSArray *tweets, NSError *error) {
         if (tweets) {
@@ -166,13 +171,5 @@
     }];
     
 }
-
-// Calculate the height of each row
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    TWTRTweet *tweet = self.currentTweets[indexPath.row];
-    
-    return [TWTRTweetTableViewCell heightForTweet:tweet width:self.cellWidth];
-}
-
 
 @end

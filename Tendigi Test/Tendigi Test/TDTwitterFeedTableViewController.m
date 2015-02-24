@@ -13,7 +13,7 @@
 #import "TDGeoTwitterFeedTableViewController.h"
 #import "UIColor+TDColor.h"
 
-@interface TDTwitterFeedTableViewController () <TWTRTweetViewDelegate>
+@interface TDTwitterFeedTableViewController () <TWTRTweetViewDelegate, UITableViewDelegate>
 
 {
     TDTwitterFeedTableViewDataSource *_dataSource;
@@ -51,6 +51,9 @@
     
     self.navigationController.navigationBar.backgroundColor = [UIColor tendigiPurple];
     
+    self.tableView.delegate = self;
+    self.estimatedRowHeightCache = [[TDTableViewHeightCache alloc] init];
+    _dataSource.estimatedRowHeightCache = self.estimatedRowHeightCache;
 }
 
 - (void)refreshTable:(id)sender {
@@ -67,7 +70,7 @@
 }
 
 - (void)gotMoreTweets {
-    [self.tableView reloadData];
+    //[self.tableView reloadData];
     NSLog(@"-got tweets, reloading table-");
 }
 
@@ -89,6 +92,10 @@
  // Pass the selected object to the new view controller.
  }
  */
+
+-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return [self.estimatedRowHeightCache getEstimatedCellHeightFromCache:indexPath defaultHeight:41.5];
+}
 
 #pragma mark - TWTRTweetViewDelegate
 

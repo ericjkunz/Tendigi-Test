@@ -11,10 +11,13 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import <TwitterKit/TwitterKit.h>
+#import "TDTableViewHeightCache.h"
 
 @interface TDTwitterFeedTableViewDataSource : NSObject <UITableViewDataSource>
 
 @property (nonatomic, weak) UITableViewController <TWTRTweetViewDelegate> *tweetDelegate;
+@property (nonatomic, strong) NSMutableArray *currentTweets;
+@property (nonatomic) TDTableViewHeightCache *estimatedRowHeightCache;
 
 - (instancetype)initLocationBased:(BOOL)local;
 - (void)refreshTweetsCompletion:(void (^)(BOOL success, NSError *error))completionHandler;

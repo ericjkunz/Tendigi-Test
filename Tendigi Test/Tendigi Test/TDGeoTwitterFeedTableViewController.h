@@ -9,7 +9,10 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #import "TDTwitterFeedTableViewController.h"
+#import "TDTableViewHeightCache.h"
 
 @interface TDGeoTwitterFeedTableViewController : UITableViewController
+
+@property (nonatomic) TDTableViewHeightCache *estimatedRowHeightCache;
 
 @end

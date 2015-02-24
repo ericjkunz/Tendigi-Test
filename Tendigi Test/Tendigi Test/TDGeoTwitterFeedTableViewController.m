@@ -22,9 +22,7 @@
 
 @implementation TDGeoTwitterFeedTableViewController
 
-- (instancetype)init {
-    self = [super init];
-    
+- (void)viewDidLoad {
     // Data source
     _dataSource = [[TDTwitterFeedTableViewDataSource alloc] initLocationBased:YES];
     _dataSource.tweetDelegate = self;
@@ -35,7 +33,9 @@
     self.navigationItem.title = @"Tweets Near Tendigi";
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneButtonHit:)];
     
-    return self;
+    self.tableView.delegate = self;
+    self.estimatedRowHeightCache = [[TDTableViewHeightCache alloc] init];
+    _dataSource.estimatedRowHeightCache = self.estimatedRowHeightCache;
 }
 
 - (void)doneButtonHit:(id)sender {
@@ -73,6 +73,10 @@
 - (void)shareSite:(id)sender {
     UIActivityViewController *acitivtyVC = [[UIActivityViewController alloc] initWithActivityItems:@[self.viewingURL] applicationActivities:nil];
     [self presentViewController:acitivtyVC animated:YES completion:nil];
+}
+
+-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return [self.estimatedRowHeightCache getEstimatedCellHeightFromCache:indexPath defaultHeight:41.5];
 }
 
 
