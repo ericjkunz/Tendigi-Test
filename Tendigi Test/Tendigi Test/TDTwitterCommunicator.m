@@ -51,38 +51,43 @@
 }
 
 - (void)getTweetsWithCompletion:(void(^)(NSArray *tweets, NSError *error))completionHandler{
+    // Make sure we are logged in as guest before requesting from API
     if (![[Twitter sharedInstance] guestSession]) {
         [self loginGuestWithCompletion:^(bool success, NSError *error) {
             if (error) {
                 completionHandler(nil, error);
+            } else {
+                [self getTweetsWithCompletion:^(NSArray *tweets, NSError *error) {
+                    completionHandler(tweets, error);
+                }];
+            }
+        }];
+    } else {
+        
+        // Request parameters
+        NSDictionary *params;
+        if (self.max_id) { // If there has already been one request, use max_id to get next batch of tweets
+            params = @{@"screen_name":@"tendigi", @"count":[NSString stringWithFormat:@"%@", @100], @"max_id": [self.max_id stringValue]};
+            NSLog(@"-request with max_id");
+        } else {
+            params = @{@"screen_name":@"tendigi", @"count":[NSString stringWithFormat:@"%@", @100]};
+        }
+        
+        // Create request
+        NSError *__autoreleasing error;
+        NSURLRequest *twitRequest = [[[Twitter sharedInstance] APIClient] URLRequestWithMethod:@"GET" URL:self.urlString parameters:params error:&error];
+        if (error) {
+            NSLog(@"error creating request: %@", error);
+        }
+        
+        [self sendTwitterRequest:twitRequest completion:^(NSArray *tweets, NSError *error) {
+            if (tweets) {
+                completionHandler(tweets, nil);
+            } else {
+                completionHandler(nil, error);
             }
         }];
     }
-    
-    // Request parameters
-    NSDictionary *params;
-    if (self.max_id) { // If there has already been one request, use max_id to get next batch of tweets
-        params = @{@"screen_name":@"tendigi", @"count":[NSString stringWithFormat:@"%@", @100], @"max_id": [self.max_id stringValue]};
-        NSLog(@"-request with max_id");
-    } else {
-        params = @{@"screen_name":@"tendigi", @"count":[NSString stringWithFormat:@"%@", @100]};
-    }
-    
-    // Create request
-    NSError *__autoreleasing error;
-    NSURLRequest *twitRequest = [[[Twitter sharedInstance] APIClient] URLRequestWithMethod:@"GET" URL:self.urlString parameters:params error:&error];
-    if (error) {
-        NSLog(@"error creating request: %@", error);
-    }
-    
-    [self sendTwitterRequest:twitRequest completion:^(NSArray *tweets, NSError *error) {
-        if (tweets) {
-            completionHandler(tweets, nil);
-        } else {
-            completionHandler(nil, error);
-        }
-    }];
-    
 }
 
 - (void)getTweetsNearTendigiWithCompletion:(void(^)(NSArray *tweets, NSError *error))completionHandler {

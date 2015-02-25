@@ -54,7 +54,7 @@
     _dataSource.estimatedRowHeightCache = self.estimatedRowHeightCache;
 }
 
-- (void)refreshTable:(id)sender {
+- (void)refreshTable:(id)sender {    
     [_dataSource refreshTweetsCompletion:^(BOOL success, NSError *error) {
         if (success) {
             [self.tableView reloadData];
@@ -87,7 +87,7 @@
     // Get link from tweet's text
     NSError *error;
     NSDataDetector *dataDetector = [[NSDataDetector alloc] initWithTypes:NSTextCheckingTypeLink error:&error];
-
+    
     NSString *tweetText = tweet.text;
     NSArray *matches = [dataDetector matchesInString:tweetText options:0 range:NSMakeRange(0, [tweetText length])];
     
